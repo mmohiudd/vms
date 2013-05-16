@@ -1,0 +1,10 @@
+.DS_Store
+.vagrant
+.idea
+.ropeproject
+.venv
+*.log
+*.pyc
+*.pid
+.build/
+*.timemachine.supported
