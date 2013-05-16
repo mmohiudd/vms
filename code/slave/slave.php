@@ -46,8 +46,8 @@ echo "OK.\n\n";
 set_time_limit(0); // do not timeout
 $sock = socket_create(AF_INET, SOCK_STREAM, 0);
 
-$hostname = gethostname();
-$address = gethostbyname("master1.localhost");
+$hostname = "master1.localhost";
+$address = gethostbyname($hostname);
 $port = 5000;
 
 _log("started slave daemon " . $hostname);
@@ -58,6 +58,8 @@ if(!($sock = socket_create(AF_INET, SOCK_STREAM, 0))) {
 	_log("[error] Couldn't create socket: [$errorcode] $errormsg.");
 	exit(1);
 }
+
+_log(sprintf("connect to %s %s:%s", $hostname, $address, $port));
 
 // Bind the source address
 if( !socket_bind($sock, $address , $port) ){	
@@ -93,7 +95,7 @@ socket_close($socket); // close this socket
 * write whatever is in the $log. 
 */
 function _log($log){
-	$message = sprintf("[%s] %s\n", date("H:i:s Y-m-d"), $log);
+	$message = sprintf("[%s]%s\n", date("Y-m-d H:i:s"), $log);
 
 	file_put_contents("slave.log", $message, FILE_APPEND);
 }
