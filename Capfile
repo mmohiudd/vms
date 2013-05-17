@@ -1,4 +1,7 @@
-role :libs, "vagrant@192.168.100.22", "vagrant@192.168.100.23", "vagrant@192.168.100.24"
+role :libs, "192.168.100.22", "192.168.100.23", "192.168.100.24"
+
+set :user, "vagrant"
+set :password, "vagrant"
 
 task :start_daemon, :roles => :libs do
   run "cd code && php daemon.php &&"
