@@ -9,6 +9,8 @@ $hostname = gethostname();
 $address = "192.168.100.22";
 $port = 5000;
 
+echo "started master daemon $hostname \n";
+
 _log("started master daemon " . $hostname);
 
 if(!($sock = socket_create(AF_INET, SOCK_STREAM, 0))) {
@@ -39,15 +41,16 @@ $clients = array();
 
 do {
     $read = array();
+    $write = array();
+    $except = array();
     $read[] = $sock;
     
     $read = array_merge($read,$clients);
     
+    
     // Set up a blocking call to socket_select
-    if(socket_select($read, $write, $except,5) < 1)
-    {
-        //    SocketServer::debug("Problem blocking socket_select?");
-        echo ".";
+   if(socket_select($read, $write, $except,5) < 1) {
+    	echo ".";
         continue;
     }
     
@@ -62,39 +65,27 @@ do {
         }
         $clients[] = $msgsock;
         $key = array_keys($clients, $msgsock);
-        
-        $msg = "\nWelcome to the PHP Test Server. \n" .
-        "To quit, type 'quit'. To shut down the server type 'shutdown'.\n";
-        socket_write($msgsock, $msg, strlen($msg));
-        
     }
     
     // Handle Input
     foreach ($clients as $key => $client) { // for each client        
         if (in_array($client, $read)) {
+        	$input = socket_read($client, 1024);
         	
-            if (false === ($buf = socket_read($client, 2048, PHP_NORMAL_READ))) {
-            	$errorcode = socket_last_error();
-				$errormsg = socket_strerror($errorcode);
-                _log("[error] Couldn't read from socket: [$errorcode] $errormsg.");
-                break 2;
-            }
-            if (!$buf = trim($buf)) {
-                continue;
-            }
-            if ($buf == 'quit') {
+        	$message = trim($input);
+        	// log if only there are some message came through
+        	if(strlen($message)>0){
+	        	socket_getpeername($client, $client_address, $cient_port);
+
+	        	_log(sprintf("received '%s' from %s:%s", $message, $client_address, $cient_port));
+	        }
+
+            if ($message == 'quit') {
                 unset($clients[$key]);
                 socket_close($client);
                 break;
             }
-            if ($buf == 'shutdown') {
-                socket_close($client);
-                break 2;
-            }
-            
-            $talkback = "Cliente {$key}: '$buf'.\n";
-            socket_write($client, $talkback, strlen($talkback));
-            _log($buf);
+        
         }
         
     }        
@@ -108,6 +99,6 @@ socket_close($sock); // close this socket
 function _log($log){
 	$message = sprintf("[%s]%s\n", date("Y-m-d H:i:s"), $log);
 
-	file_put_contents("master.log", $message, FILE_APPEND);
+	file_put_contents("log", $message, FILE_APPEND);
 }
 ?>

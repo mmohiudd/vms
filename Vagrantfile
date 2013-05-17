@@ -9,7 +9,7 @@ Vagrant.configure("2") do |config|
 
   config.vm.provision :shell, :path => "provision/shell/network.sh" # fix all network related things
   config.vm.provision :shell, :path => "provision/shell/php.sh" # install php cli
-
+  
   config.vm.define :master1 do |master1|
     master1.vm.network :forwarded_port, guest: 22, host: 22221
     master1.vm.hostname = "master1.localhost"

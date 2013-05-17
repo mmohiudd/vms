@@ -8,3 +8,4 @@
 *.pid
 .build/
 *.timemachine.supported
+log
