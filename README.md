@@ -1,4 +1,4 @@
-#vms
+vms
 ===
 
 A vagrant based multi-machine development environment. This is simply a collection of some scripts for awesome tools.
