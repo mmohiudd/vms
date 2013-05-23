@@ -6,7 +6,7 @@ date_default_timezone_set("America/Toronto");
 set_time_limit(0); // do not timeout
 
 $hostname = gethostname(); 
-$address = "192.168.100.22";
+$address = "*.*.*.*";
 $port = 5000;
 
 echo "started master daemon $hostname \n";
